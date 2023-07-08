@@ -1,74 +1,135 @@
-import { useEffect, useState } from "react";
-import { styled } from "styled-components";
-
-const QuestionContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  box-sizing: border-box;
-`;
-const CardContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px;
-  h3 {
-    margin: 0;
-    text-align: center;
-  }
-`;
-const ButtonsContainer = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-type INotButton = {
-  position: "relative" | "absolute";
-  left: number;
-  top: number;
-};
-const NotButton = styled.input<INotButton>``;
-
-const getRandomNumber = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+import { useEffect, useState, useCallback } from "react";
+import { getRandomNumber } from "./utils";
+import { INotButton, IResponseStatus } from "./interface";
+import {
+  ButtonsContainer,
+  CardContainer,
+  NotButton,
+  QuestionContainer,
+  ResponseTitle,
+} from "./style";
+import { StyleSheetManager } from "styled-components";
+import isPropValid from "@emotion/is-prop-valid";
+import { questionData } from "../../data";
 
 export const Question = () => {
+  const [resetTimer, setResetTimer] = useState<number | null>(null);
   const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
   const [notButtonStatus, setNotButtonStatus] = useState<INotButton>({
     position: "relative",
     left: 0,
     top: 0,
   });
+  const [responseStatus, setResponseStatus] = useState<IResponseStatus>({
+    afirmativeOrNegative: "negative",
+    index: 0,
+    response: "",
+  });
+
+  const setAfirmativeOrNegativeResponse = (
+    afirmativeOrNegative: "afirmative" | "negative"
+  ) => {
+    const { afirmativeButtonResponseList, negativeButtonResponseList } =
+      questionData;
+    const updateResponseStatus: IResponseStatus = {
+      afirmativeOrNegative: afirmativeOrNegative,
+      index: 0,
+      response: "",
+    };
+    if (afirmativeOrNegative === "afirmative") {
+      const afirmativeReponseLength = afirmativeButtonResponseList.length;
+      const randonIndex = getRandomNumber(0, afirmativeReponseLength - 1);
+      const randonAfirmativeReponse = afirmativeButtonResponseList[randonIndex];
+
+      updateResponseStatus.index = randonIndex;
+      updateResponseStatus.response = randonAfirmativeReponse;
+    } else if (afirmativeOrNegative === "negative") {
+      const negativeReponseLength = negativeButtonResponseList.length;
+      const randonIndex = getRandomNumber(0, negativeReponseLength - 1);
+      const randomNegativeResponse = negativeButtonResponseList[randonIndex];
+
+      updateResponseStatus.index = randonIndex;
+      updateResponseStatus.response = randomNegativeResponse;
+    }
+    setResponseStatus(updateResponseStatus);
+  };
+
+  const resetButtonPosition = () => {
+    setNotButtonStatus({ position: "relative", left: 0, top: 0 });
+  };
+
+  const resetResponseStatus = () => {
+    setResponseStatus({
+      afirmativeOrNegative: "afirmative",
+      index: 0,
+      response: "",
+    });
+  };
 
   const notButtonHandleHover = () => {
     const { width, height } = pageSize;
-    const randonWidth = getRandomNumber(0, width);
-    const randonHeight = getRandomNumber(0, height);
-    console.log("EixoX: ", randonWidth);
-    console.log("EixoY: ", randonHeight);
+    const randonLeft = getRandomNumber(0, width);
+    const randonTop = getRandomNumber(0, height);
+
+    if (resetTimer) {
+      clearTimeout(resetTimer);
+    }
+
+    setResetTimer(
+      setTimeout(() => {
+        resetButtonPosition();
+        resetResponseStatus();
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+        }
+        setResetTimer(null);
+      }, 5000)
+    );
+
+    setAfirmativeOrNegativeResponse("negative");
+    setNotButtonStatus({ position: "fixed", left: randonLeft, top: randonTop });
   };
 
-  useEffect(() => {
-    const pageWidth = document.documentElement.scrollWidth;
-    const pageHeigth = document.documentElement.scrollHeight;
+  const updatePageSize = useCallback(() => {
+    const pageWidth = document.documentElement.scrollWidth - 100;
+    const pageHeight = document.documentElement.scrollHeight - 50;
 
-    setPageSize({ width: pageWidth, height: pageHeigth });
+    setPageSize({ width: pageWidth, height: pageHeight });
   }, []);
+
+  useEffect(() => {
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+
+    return () => {
+      window.removeEventListener("resize", updatePageSize);
+    };
+  }, []);
+
   return (
     <QuestionContainer>
       <CardContainer>
-        <h3>Question?</h3>
+        <h3>{questionData.questionText}</h3>
         <ButtonsContainer>
-          <input type="button" value="Sim" />
-          <NotButton
-            type="button"
-            value="Não"
-            onMouseEnter={notButtonHandleHover}
-          />
+          <a href={questionData.afirmativeButtonUrlLink} target="_blank">
+            <input
+              type="button"
+              value={questionData.afirmativeButtonText}
+              onMouseEnter={() => setAfirmativeOrNegativeResponse("afirmative")}
+            />
+          </a>
+          <StyleSheetManager shouldForwardProp={isPropValid}>
+            <NotButton
+              notButtonStatus={notButtonStatus}
+              type="button"
+              value={questionData.negativeButtonText}
+              onMouseEnter={notButtonHandleHover}
+            />
+          </StyleSheetManager>
         </ButtonsContainer>
+        <ResponseTitle responseStatus={responseStatus}>
+          {responseStatus.response}
+        </ResponseTitle>
       </CardContainer>
     </QuestionContainer>
   );
