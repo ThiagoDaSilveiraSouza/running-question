@@ -54,37 +54,10 @@ export const Question = () => {
     setResponseStatus(updateResponseStatus);
   };
 
-  const resetButtonPosition = () => {
-    setNotButtonStatus({ position: "relative", left: 0, top: 0 });
-  };
-
-  const resetResponseStatus = () => {
-    setResponseStatus({
-      afirmativeOrNegative: "afirmative",
-      index: 0,
-      response: "",
-    });
-  };
-
   const notButtonHandleHover = () => {
     const { width, height } = pageSize;
     const randonLeft = getRandomNumber(0, width);
     const randonTop = getRandomNumber(0, height);
-
-    if (resetTimer) {
-      clearTimeout(resetTimer);
-    }
-
-    setResetTimer(
-      setTimeout(() => {
-        resetButtonPosition();
-        resetResponseStatus();
-        if (resetTimer) {
-          clearTimeout(resetTimer);
-        }
-        setResetTimer(null);
-      }, 5000)
-    );
 
     setAfirmativeOrNegativeResponse("negative");
     setNotButtonStatus({ position: "fixed", left: randonLeft, top: randonTop });
