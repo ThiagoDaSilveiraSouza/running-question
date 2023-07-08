@@ -128,6 +128,7 @@ export const Question = () => {
               type="button"
               value={questionData.negativeButtonText}
               onMouseEnter={notButtonHandleHover}
+              onClick={notButtonHandleHover}
             />
           </ButtonsContainer>
           <ResponseTitle
