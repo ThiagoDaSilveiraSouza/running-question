@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          repository: https://github.com/username/repo.git
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
