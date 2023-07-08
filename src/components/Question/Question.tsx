@@ -13,7 +13,6 @@ import isPropValid from "@emotion/is-prop-valid";
 import { questionData } from "../../data";
 
 export const Question = () => {
-  const [resetTimer, setResetTimer] = useState<number | null>(null);
   const [pageSize, setPageSize] = useState({ width: 0, height: 0 });
   const [notButtonStatus, setNotButtonStatus] = useState<INotButton>({
     position: "relative",
