@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { INotButton, IResponseStatus } from "./interface";
+import { INotButton } from "./interface";
 
 export const QuestionContainer = styled.div`
   display: flex;
@@ -36,27 +36,21 @@ export const ButtonsContainer = styled.div`
   }
 `;
 
-type INotButtonElement = {
-  notButtonStatus: INotButton;
-};
-
-export const NotButton = styled.input<INotButtonElement>`
-  position: ${({ notButtonStatus }) => notButtonStatus.position};
-  top: ${({ notButtonStatus }) => notButtonStatus.top}px;
-  left: ${({ notButtonStatus }) => notButtonStatus.left}px;
+export const NotButton = styled.input<INotButton>`
+  position: ${(props) => props.position};
+  top: ${(props) => props.top}px;
+  left: ${(props) => props.left}px;
   transition: 0.3s;
 `;
 
 type IResponseTitle = {
-  responseStatus: IResponseStatus;
+  afirmativeornegative: "afirmative" | "negative";
 };
 
 export const ResponseTitle = styled.h4<IResponseTitle>`
   margin: 0;
   text-align: center;
   transition: 0.3s;
-  color: ${({ responseStatus }) =>
-    responseStatus.afirmativeOrNegative === "afirmative"
-      ? "#00988d"
-      : "#fc1a1a"};
+  color: ${({ afirmativeornegative }) =>
+    afirmativeornegative === "afirmative" ? "#00988d" : "#fc1a1a"};
 `;

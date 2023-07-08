@@ -108,29 +108,35 @@ export const Question = () => {
 
   return (
     <QuestionContainer>
-      <CardContainer>
-        <h3>{questionData.questionText}</h3>
-        <ButtonsContainer>
-          <a href={questionData.afirmativeButtonUrlLink} target="_blank">
-            <input
-              type="button"
-              value={questionData.afirmativeButtonText}
-              onMouseEnter={() => setAfirmativeOrNegativeResponse("afirmative")}
-            />
-          </a>
-          <StyleSheetManager shouldForwardProp={isPropValid}>
+      <StyleSheetManager shouldForwardProp={isPropValid}>
+        <CardContainer>
+          <h3>{questionData.questionText}</h3>
+          <ButtonsContainer>
+            <a href={questionData.afirmativeButtonUrlLink} target="_blank">
+              <input
+                type="button"
+                value={questionData.afirmativeButtonText}
+                onMouseEnter={() =>
+                  setAfirmativeOrNegativeResponse("afirmative")
+                }
+              />
+            </a>
             <NotButton
-              notButtonStatus={notButtonStatus}
+              position={notButtonStatus.position}
+              top={notButtonStatus.top}
+              left={notButtonStatus.left}
               type="button"
               value={questionData.negativeButtonText}
               onMouseEnter={notButtonHandleHover}
             />
-          </StyleSheetManager>
-        </ButtonsContainer>
-        <ResponseTitle responseStatus={responseStatus}>
-          {responseStatus.response}
-        </ResponseTitle>
-      </CardContainer>
+          </ButtonsContainer>
+          <ResponseTitle
+            afirmativeornegative={responseStatus.afirmativeOrNegative}
+          >
+            {responseStatus.response}
+          </ResponseTitle>
+        </CardContainer>
+      </StyleSheetManager>
     </QuestionContainer>
   );
 };
